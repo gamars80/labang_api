@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobin.mapper.SellerMapper">
+
+	<!-- 셀러 로그인 -->
+	<select id="sellerLogin" resultType="com.mobin.model.AuthToken">
+		SELECT 
+			uid as sid,
+			passwd,
+			pw_init AS seller_flag,
+			nickname
+		FROM 
+			seller 
+		WHERE 
+			id = #{id} 
+			AND isdel != 1			
+	</select>
+	
+	<select id="selectSellerInfoById" resultType="com.mobin.model.SellerVO">
+		SELECT 
+			uid,
+			id,
+			pw_init AS seller_flag,
+			passwd,
+			app_passwd,
+			nickname
+		FROM 
+			seller 
+		WHERE 
+			id = #{id} 	
+	</select>
+	
+	
+	
+	<update id="updateAgreeFlag" parameterType="Long">
+		UPDATE seller 
+		SET
+			agree_flag = 1
+		WHERE 
+			uid = #{uid}
+	</update>
+	
+	
+	<update id="updateSellerPasswd" parameterType="map">
+		UPDATE seller 
+		SET
+			passwd = #{passwd},
+			pw_init = 1
+		WHERE 
+			uid = #{uid}
+	</update>
+	
+	<update id="updateSellerAppToken" parameterType="com.mobin.model.SellerVO">
+		UPDATE seller 
+		SET
+			app_token = #{app_token}			
+		WHERE 
+			uid = #{uid}
+	</update>
+	
+	<select id="selectMyActivityList" resultType="com.mobin.model.SellerPushVO">
+		SELECT 
+			push_id, 
+			uid AS sid,
+			push_message,
+			push_flag 
+		FROM 
+			seller_push 
+		WHERE uid = #{uid} 
+		ORDER BY push_id DESC
+	</select>
+	
+	<update id="updateActivityFlag" parameterType="com.mobin.model.SellerPushVO">
+		UPDATE seller_push
+		SET
+		push_flag = 1
+		WHERE 
+		uid = #{uid} AND push_id = #{push_id}
+	</update>
+</mapper>

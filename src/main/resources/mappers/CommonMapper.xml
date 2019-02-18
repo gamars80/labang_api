@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobin.mapper.CommonMapper">
+
+	<!-- 셀러 로그인 -->
+	<select id="selectAppVersionInfo" resultType="com.mobin.model.CommonAppVO">
+		SELECT 
+			discript as app_v
+		FROM 
+			code_entity 
+		WHERE 
+			1=1
+			and code = #{device_type}		
+	</select>
+
+</mapper>

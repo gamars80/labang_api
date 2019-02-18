@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mobin.mapper.BroadcastMapper">
+
+	<select id="selectMyBroadcastList" parameterType="map" resultType="com.mobin.model.BroadcastVO">
+		SELECT
+			b.bid,
+			p.prkey AS pid,
+			p.name AS product_name,
+			b.startymd,
+			b.endymd,
+			b.starttime				AS broadcast_start, 
+		    b.endtime       		AS broadcast_end,
+		    IFNULL(p.imgurl, '')  	AS product_img 
+		FROM 
+			broadcast b
+			LEFT OUTER JOIN product p ON p.prid = b.prid
+		WHERE
+			b.isdel !=1
+			AND b.uid = #{uid}
+			AND b.status IN (1,2)
+		LIMIT ${start_p}, ${end_p}   
+		
+	</select>
+	
+	<select id="selectMyBroadcastMonthlyList"  resultType="com.mobin.model.BroadcastVO">
+		SELECT bid,   
+	       p.prkey               	AS pid,
+	       p.NAME             	 	AS product_name,    
+	       b.startymd,
+	       b.endymd,    
+	       b.starttime	   			AS broadcast_start, 
+	       b.endtime             	AS broadcast_end,
+	       IFNULL(p.imgurl, '')  	AS product_img 
+		FROM   
+			broadcast b
+			LEFT OUTER JOIN product p ON b.prid = p.prid
+		WHERE
+			isdel != 1 
+			AND uid = #{uid}
+			<!-- AND SUBSTRING(startymd,1,6) = DATE_FORMAT(NOW(),'%Y%m')	   -->
+			AND SUBSTRING(startymd,1,6) = 201809
+	</select>
+	
+	<select id="selectSellerBroKeyCnt" resultType="Integer" parameterType="map">
+		SELECT COUNT(1) 
+		FROM 
+			seller 
+		WHERE 
+			bro_key = #{bro_key} 
+			AND uid = #{uid}
+	</select>
+	
+	<select id="selectBroadcastCnt" resultType="Integer">
+		SELECT COUNT(1) FROM 
+		broadcast WHERE bid = #{bid} AND STATUS = 2 AND isdel != 1
+	</select>
+	
+	
+	<select id="selectBroadCastInfo" resultType="com.mobin.model.BroadcastDetailVO">
+		SELECT 
+			b.bid,   
+			p.prkey               	AS pid,
+			p.NAME              	AS product_name, 
+	        b.startymd,
+	        b.endymd,        
+	        UNIX_TIMESTAMP()    	AS real_time, 
+	        b.starttime	   			AS broadcast_start, 
+	        b.endtime             	AS broadcast_end,
+	        IFNULL(s.bro_token,'')	AS broadcast_token
+		FROM      
+			broadcast b
+			LEFT OUTER JOIN product p ON p.prid = b.prid
+			LEFT OUTER JOIN seller s ON s.uid = b.uid
+		WHERE     
+			b.isdel != 1 
+			AND b.bid = #{bid}
+	</select>
+	
+	
+
+	
+	
+	<select id="selectMyBroadcastHistList" parameterType="map" resultType="com.mobin.model.BroadcastHistVO">
+		SELECT 
+			GROUP_CONCAT(bid),
+			p.imgurl              	AS product_img,
+			p.NAME              	AS product_name, 
+			b.startymd,
+			b.endymd,
+			b.starttime	   	AS broadcast_start, 
+			b.endtime             	AS broadcast_end
+		FROM   
+			broadcast b
+		       	LEFT OUTER JOIN product p ON p.prid = b.prid
+		WHERE
+			b.isdel != 1 AND b.uid = #{uid}  AND b.status = 3
+		GROUP BY b.prid,DATE_FORMAT(b.startymd,'%Y%m%d')
+		ORDER BY DATE_FORMAT(b.startymd,'%Y%m%d') desc
+		LIMIT ${start_p}, ${end_p}   
+		
+	</select>
+	
+	
+	<select id="selectReviewBroadcastList" parameterType="map" resultType="com.mobin.model.BroadcastReviewVO">
+		SELECT 
+			b.bro_url 				AS broadcast_reviewurl, 
+			FORMAT(b.bro_viewer,0)	AS broadcast_maxview, 
+			b.starttime	 			AS broadcast_start 
+		FROM 
+			broadcast b
+		WHERE 
+			b.isdel != 1 
+			AND b.bid IN (${bids})
+	</select>
+	
+	<select id="selectMyBroadcastSalesList" parameterType="map" resultType="com.mobin.model.BroadcastSalesVO">
+		SELECT 
+			b.bid,   
+			p.prkey			AS pid,
+			p.imgurl              	AS product_img,
+			p.NAME              	AS product_name, 
+			b.startymd,
+			b.endymd,
+			b.starttime	   	AS broadcast_start, 
+			b.endtime             	AS broadcast_end
+		FROM   
+			broadcast b
+			LEFT JOIN product p ON b.prid = p.prid
+		WHERE
+			b.isdel != 1 
+			AND b.uid = #{uid} 
+			AND b.status = 3
+		ORDER BY b.startymd desc	
+		LIMIT ${start_p},${end_p}   	
+	</select>
+	
+	
+		<select id="selectUserBroadcastList" parameterType="map" resultType="com.mobin.model.UserBroadcastVO">
+		SELECT 
+			b.bid,   
+			p.imgurl              	AS product_img,
+			p.NAME              	AS product_name, 
+			b.startymd,
+			b.endymd,
+			b.starttime	       		AS broadcast_start, 
+			b.endtime             	AS broadcast_end,
+			F_GET_CODE_VALUE('broadcast_status',b.status) AS boradcast_status
+		FROM   
+			broadcast b
+			LEFT OUTER JOIN product p ON b.prid = p.prid
+		WHERE
+			b.isdel != 1 
+			<if test=" null != ymd and '' != ymd ">
+			AND  DATE_FORMAT(startymd, '%Y%m%d') = #{ymd}
+			</if>
+			<if test=" null == ymd or '' == ymd ">
+			AND  DATE_FORMAT(startymd, '%Y%m%d') = DATE_FORMAT(NOW(),'%Y%m%d')
+			</if>
+			
+		LIMIT ${start_p},${end_p} 
+	</select>
+	
+	
+	
+</mapper>

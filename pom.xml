@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mobin</groupId>
+    <artifactId>labang-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.1.RELEASE</version>
+    </parent>
+
+
+    <dependencies>
+		
+    	<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+    	<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		</dependency>
+
+    	
+    	
+    	<dependency>
+		    <groupId>org.bgee.log4jdbc-log4j2</groupId>
+		    <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
+		    <version>1.16</version>
+		</dependency>    
+
+    	<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		</dependency>
+    	
+    
+    	<!-- myBatis 설정 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <build>
+    	<resources>
+        	<resource>
+            	<directory>src/main/resources</directory>
+            	<filtering>true</filtering>
+        	</resource>
+    	</resources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-jar-plugin</artifactId>
+			    <configuration>
+			        <archive>
+			            <manifest>
+			                <addClasspath>true</addClasspath>
+			                <classpathPrefix>lib/</classpathPrefix>
+			                <mainClass>com.mobin.ApiApplication</mainClass>
+			            </manifest>
+			        </archive>
+			    </configuration>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-dependency-plugin</artifactId>
+			    <executions>
+			        <execution>
+			            <id>copy</id>
+			            <phase>install</phase>
+			            <goals>
+			                <goal>copy-dependencies</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>
+			                    ${project.build.directory}/lib
+			                </outputDirectory>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+        </plugins>
+    </build>
+	<profiles>
+		<profile> 
+			<id>dev</id> 
+			<properties> <!-- Default spring profile to use --> 
+				<spring.profiles.active>dev</spring.profiles.active> <!-- Default environment --> 
+				<environment>dev</environment> 
+			</properties> 
+			 <build>
+			 	
+	           
+	            <plugins>
+			        <plugin>
+			            <groupId>org.apache.maven.plugins</groupId>
+			            <artifactId>maven-jar-plugin</artifactId>
+			            <configuration>
+					        <archive>
+					            <manifest>
+					                <addClasspath>true</addClasspath>
+					                <classpathPrefix>lib/</classpathPrefix>
+					                <mainClass>com.mobin.ApiApplication</mainClass>
+					            </manifest>
+					        </archive>
+					        <outputDirectory>/home/ubuntu/labang_api</outputDirectory>
+			                <jarName>${war.file.name}</jarName>
+					    </configuration>
+			            
+			        </plugin>
+			        
+			        <plugin>
+					    <groupId>org.apache.maven.plugins</groupId>
+					    <artifactId>maven-dependency-plugin</artifactId>
+					    <executions>
+					        <execution>
+					            <id>copy</id>
+					            <phase>install</phase>
+					            <goals>
+					                <goal>copy-dependencies</goal>
+					            </goals>
+					            <configuration>
+					                <outputDirectory>
+					                    /home/ubuntu/labang_api/lib
+					                </outputDirectory>
+					            </configuration>
+					        </execution>
+					    </executions>
+					</plugin>
+			    </plugins>
+	        </build> 
+		</profile>
+	</profiles>
+</project>
